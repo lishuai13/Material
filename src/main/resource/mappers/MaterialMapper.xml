@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--绑定mapper接口-->
+<mapper namespace="dao.MaterialDao">
+    <resultMap id="result" type="material">
+        <result property="itemId" column="item_id"/>
+        <result property="itemCode" column="item_code"/>
+        <result property="itemUom" column="item_uom"/>
+        <result property="itemDescription" column="item_description"/>
+        <result property="startActiveDate" column="start_active_date"/>
+        <result property="endActiveDate" column="end_active_date"/>
+        <result property="enabledFlag" column="enabled_flag"/>
+        <result property="objectVersionNumber" column="object_version_number"/>
+        <result property="creationDate" column="creation_date"/>
+        <result property="createBy" column="created_by"/>
+        <result property="lastUpdatedBy" column="last_updated_by"/>
+        <result property="lastUpdateDate" column="last_update_date"/>
+    </resultMap>
+
+    <insert id="addMaterial" parameterType="map">
+        insert into ssm_item
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="itemCode!=null"> item_code, </if>
+            <if test="itemUom!=null"> item_uom, </if>
+            <if test="itemDescription!=null"> item_description, </if>
+            <if test="startActiveDate!=null and startActiveDate!=''"> start_active_date, </if>
+            <if test="endActiveDate!=null and endActiveDate !=''"> end_active_date, </if>
+            <if test="enabledFlag!=null"> enabled_flag, </if>
+            <if test="objectVersionNumber!=null"> object_version_number, </if>
+            <if test="creationDate!=null"> creation_date, </if>
+            <if test="createBy!= null"> created_by, </if>
+            <if test="lastUpdatedBy!= null"> last_updated_by, </if>
+            <if test="lastUpdateDate!= null"> last_update_date</if>
+        </trim>
+        <trim prefix="values(" suffix=")" suffixOverrides=",">
+            <if test="itemCode != null"> #{itemCode}, </if>
+            <if test="itemUom != null"> #{itemUom}, </if>
+            <if test="itemDescription != null"> #{itemDescription}, </if>
+            <if test="startActiveDate !=null and startActiveDate !=''">#{startActiveDate}, </if>
+            <if test="endActiveDate !=null and endActiveDate !=''"> #{endActiveDate}, </if>
+            <if test="enabledFlag != null"> #{enabledFlag}, </if>
+            <if test="objectVersionNumber != null"> #{objectVersionNumber}, </if>
+            <if test="creationDate != null"> #{creationDate}, </if>
+            <if test="createBy != null"> #{createBy}, </if>
+            <if test="lastUpdatedBy != null"> #{lastUpdatedBy}, </if>
+            <if test="lastUpdateDate != null"> #{lastUpdateDate}</if>
+        </trim>
+    </insert>
+
+    <update id="editMaterial" parameterType="map">
+        update ssm_item set item_description=#{itemDescription},item_uom=#{itemUom},
+        <trim>
+            <if test="startActiveDate !=null and startActiveDate !=''">start_active_date=#{startActiveDate},</if>
+            <if test="endActiveDate !=null and endActiveDate !=''">end_active_date=#{endActiveDate},</if>
+        </trim>
+        enabled_flag=#{enabledFlag},last_update_date=#{lastUpdateDate} where item_id=#{itemId};
+    </update>
+
+    <delete id="deleteMaterial" parameterType="integer">
+        delete  from ssm_item where item_id = #{id};
+    </delete>
+
+    <select id="test" resultMap="result">
+        select * from ssm_item
+    </select>
+
+    <select id="findMaterial" resultMap="result">
+        select * from ssm_item where item_id = #{id};
+    </select>
+
+    <select id="findMaxId" resultType="java.lang.String">
+        SELECT item_code FROM ssm_item where item_id = (SELECT MAX(item_id) FROM ssm_item);
+    </select>
+
+    <select id="selectMaterial" resultType="entity.Material">
+        select * from ssm_item
+        <where>
+            <if test="itemCode !=null and itemCode !=''">and item_code like #{itemCode}</if>
+            <if test="itemDescription !=null and itemDescription !=''">and item_description like #{itemDescription}</if>
+            <if test="itemUom !=null and itemUom !=''">and item_uom=#{itemUom}</if>
+            <if test="startActiveDate !=null and startActiveDate !=''">and start_active_date >= #{startActiveDate}</if>
+            <if test="endActiveDate !=null and endActiveDate !=''">and  #{endActiveDate} >= end_active_date</if>
+            <if test="enabledFlag !=null and enabledFlag !=''">and enabled_flag=#{enabledFlag}</if>
+        </where>
+    </select>
+
+</mapper>
